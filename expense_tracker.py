@@ -1,9 +1,10 @@
 # Expense Tracker using Stack + Streamlit Dashboard
-# Run with: streamlit run app.py
+# Run with: streamlit run expense_tracker.py
 
 import streamlit as st
 from collections import defaultdict
 import matplotlib.pyplot as plt
+from datetime import datetime  # ✅ DATE KE LIYE ADD KIYA
 
 # -----------------------------
 # STACK CLASS
@@ -49,14 +50,15 @@ with col1:
         if category == "":
             st.warning("Please enter category")
         else:
-            stack.push((category, amount))
-            st.success(f"Added: {category} - {amount}")
+            date_today = datetime.now().strftime("%d %b %Y")  # ✅ e.g. 01 May 2025
+            stack.push((category, amount, date_today))  # ✅ date bhi save ho rhi
+            st.success(f"Added: {category} - {amount} on {date_today}")
 
 with col2:
     if st.button("↩️ Undo Last"):
         removed = stack.pop()
         if removed:
-            st.info(f"Removed: {removed[0]} - {removed[1]}")
+            st.info(f"Removed: {removed[0]} - {removed[1]} ({removed[2]})")
         else:
             st.warning("No expense to undo")
 
@@ -69,7 +71,7 @@ all_items = stack.get_all()
 
 if all_items:
     for i, item in enumerate(reversed(all_items), 1):
-        st.write(f"{i}. {item[0]} - {item[1]}")
+        st.write(f"{i}. 📅 {item[2]} | {item[0]} — Rs. {item[1]}")  # ✅ date show ho rhi
 else:
     st.write("No expenses added yet.")
 
@@ -78,7 +80,7 @@ else:
 # -----------------------------
 st.subheader("💰 Total Expense")
 total = sum(item[1] for item in all_items)
-st.metric("Total", total)
+st.metric("Total", f"Rs. {total}")
 
 # -----------------------------
 # GRAPH
@@ -86,7 +88,7 @@ st.metric("Total", total)
 st.subheader("📊 Category-wise Graph")
 
 data = defaultdict(float)
-for cat, amt in all_items:
+for cat, amt, date in all_items:  # ✅ date bhi unpack ho rhi
     data[cat] += amt
 
 if data:
@@ -96,5 +98,7 @@ if data:
     ax.set_ylabel("Amount")
     ax.set_title("Expenses Breakdown")
     st.pyplot(fig)
+else:
+    st.info("No data for graph")
 else:
     st.info("No data for graph")
