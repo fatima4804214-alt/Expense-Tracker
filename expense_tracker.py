@@ -25,7 +25,7 @@ class ExpenseStack:
 
 # Page Config
 st.set_page_config(page_title="Expense Tracker", layout="centered")
-st.title("💰 Expense Tracker")
+st.title("Expense Tracker")
 
 # Session State
 if "stack" not in st.session_state:
@@ -34,14 +34,13 @@ if "stack" not in st.session_state:
 stack = st.session_state.stack
 
 # Input Section
-st.subheader("➕ Add Expense")
+st.subheader("Add Expense")
 category = st.text_input("Category (e.g. Food, Travel)")
 amount = st.number_input("Amount", min_value=0.0, step=1.0)
 
-# Buttons (Correct Placement)
+# Buttons
 col1, col2, col3 = st.columns(3)
 
-# Add Expense
 with col1:
     if st.button("Add Expense"):
         if category == "":
@@ -51,7 +50,6 @@ with col1:
             stack.push((category, amount, date_time))
             st.success(f"Added: {category} - {amount} on {date_time}")
 
-# Undo
 with col2:
     if st.button("Undo Last"):
         removed = stack.pop()
@@ -60,14 +58,13 @@ with col2:
         else:
             st.warning("No expense to undo")
 
-# Reset
 with col3:
     if st.button("Reset All"):
         stack.clear()
         st.warning("All expenses cleared!")
 
 # Display Expenses
-st.subheader("📂 Expenses List")
+st.subheader("Expenses List")
 all_items = stack.get_all()
 
 if all_items:
@@ -77,12 +74,12 @@ else:
     st.write("No expenses added yet.")
 
 # Total Expense
-st.subheader("💰 Total Expense")
+st.subheader("Total Expense")
 total = sum(item[1] for item in all_items)
 st.metric("Total", f"Rs. {total}")
 
 # Graph
-st.subheader("📊 Category-wise Graph")
+st.subheader("Category-wise Graph")
 data = defaultdict(float)
 
 for item in all_items:
